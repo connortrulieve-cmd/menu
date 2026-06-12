@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- PWA: removes browser chrome when added to home screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Product Menu">
+
+  <title>Product Menu</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Schibsted+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & Base ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #183029;
+      --label-bg:   #F2F2F2;
+      --label-text: #888888;
+      --row-border: #D6EAD8;
+      --white:      #FFFFFF;
+      --footer:     #AAAAAA;
+      --serif:      'DM Serif Display', serif;
+      --sans:       'Schibsted Grotesk', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      font-family: var(--sans);
+      color: var(--primary);
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    #app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 40px 48px;
+    }
+
+    /* ── Loading / Error states ─────────────────────────── */
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: var(--sans);
+      font-size: 16px;
+      color: var(--label-text);
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .menu-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 28px;
+    }
+
+    .menu-title {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 400;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .menu-location {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--primary);
+      text-align: right;
+    }
+
+    /* ── Category section ───────────────────────────────── */
+    .category-section {
+      margin-bottom: 32px;
+    }
+
+    .category-header {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    /* ── Product table ──────────────────────────────────── */
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .product-table thead tr {
+      background: var(--label-bg);
+    }
+
+    .product-table thead th {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--label-text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 7px 10px;
+    }
+
+    .product-table thead th.col-icon  { width: 44px; text-align: center; }
+    .product-table thead th.col-name  { text-align: left; }
+    .product-table thead th.col-size  { width: 130px; text-align: right; }
+    .product-table thead th.col-price { width: 100px; text-align: right; }
+
+    .product-table tbody tr {
+      border-bottom: 1px solid var(--row-border);
+    }
+
+    .product-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .product-table tbody td {
+      padding: 10px 10px;
+      vertical-align: middle;
+    }
+
+    /* ── Icon cell ──────────────────────────────────────── */
+    .col-icon {
+      width: 44px;
+      text-align: center;
+    }
+
+    .strain-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .strain-icon img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .icon-S { background: #FFC658; }
+    .icon-H { background: #78D64B; }
+    .icon-I { background: #A77BCA; }
+    .icon-R { background: #CED9E5; }
+
+    /* ── Name cell ──────────────────────────────────────── */
+    .col-name { text-align: left; }
+
+    .product-name {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      display: block;
+    }
+
+    .product-desc {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-style: italic;
+      color: #999999;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ── Size cell ──────────────────────────────────────── */
+    .col-size {
+      width: 130px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: #444444;
+    }
+
+    /* ── Price cell ─────────────────────────────────────── */
+    .col-price {
+      width: 100px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    .menu-footer {
+      margin-top: 32px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-style: italic;
+      color: var(--footer);
+    }
+
+    /* ── iPad landscape optimizations ──────────────────── */
+    @media screen and (orientation: landscape) and (min-width: 1000px) {
+      #app { padding: 28px 48px 40px; }
+      .menu-title { font-size: 46px; }
+      .category-header { font-size: 30px; }
+      .product-name { font-size: 15px; }
+      .col-price { font-size: 16px; }
+    }
+
+    /* ── Scrollbar styling ──────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--row-border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div id="loading">Loading menu…</div>
+<div id="app" style="display:none"></div>
+
+<script>
+  // ══════════════════════════════════════════════════════════
+  //  CONFIGURATION — update these values
+  // ══════════════════════════════════════════════════════════
+  const SHEET_ID  = '1mNhTLEtmUn9HOEALMPak4jbi7Bk_Dmn8h0mhxqWwUWo';   // ← paste your Google Sheet ID
+  const TAB_NAME  = 'Web Menu';             // ← tab name to read from
+  const GID       = '0';                    // ← tab GID (find in URL when tab is selected)
+
+  // Menu display settings (mirrors your Settings tab)
+  const SETTINGS = {
+    menuTitle:    'Product Menu',
+    locationName: 'Our Location',           // ← update per location copy
+    showPrice:    true,
+    showStrain:   true,
+  };
+
+  // Strain icons — paste your Drive PNG URLs here, or leave empty for letter badges
+  const ICONS = {
+    Sativa: 'https://connortrulieve-cmd.github.io/menu/sativa.png',
+    Hybrid: 'https://connortrulieve-cmd.github.io/menu/hybrid.png',
+    Indica: 'https://connortrulieve-cmd.github.io/menu/indica.png',
+    Ratio:  'https://connortrulieve-cmd.github.io/menu/cbd.png',
+  };
+
+  const STRAIN_ORDER    = { Sativa: 1, Hybrid: 2, Indica: 3, Ratio: 4 };
+  const TYPE_ORDER      = ['Nasal', 'Oral', 'Sublingual', 'Topical'];
+  const ICON_LETTER_MAP = { Sativa: 'S', Hybrid: 'H', Indica: 'I', Ratio: 'R' };
+
+  // ══════════════════════════════════════════════════════════
+  //  DATA FETCH — reads published Google Sheet as CSV
+  // ══════════════════════════════════════════════════════════
+  // We read from the Catalog tab directly (not Web Menu)
+  // so the HTML is always in sync with the source data.
+  // The Catalog tab must be published: File → Share → Publish to web → Catalog → CSV
+
+  const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Catalog`;
+
+  async function fetchProducts() {
+    const res  = await fetch(CSV_URL);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    if (rows.length < 2) return [];
+
+    // Skip header row, map columns:
+    // 0=Active, 1=ProductName, 2=ProductType, 3=StrainType,
+    // 4=UnitSize, 5=Price, 6=Description
+    const products = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const active = String(r[0] || '').toUpperCase();
+      if (active !== 'TRUE') continue;
+
+      const product = {
+        name:        String(r[1] || '').trim(),
+        productType: String(r[2] || '').trim(),
+        strainType:  String(r[3] || '').trim(),
+        unitSize:    String(r[4] || '').trim(),
+        price:       r[5],
+        description: String(r[6] || '').trim(),
+      };
+      if (product.name) products.push(product);
+    }
+
+    // Sort by type then strain
+    products.sort((a, b) => {
+      const tA = TYPE_ORDER.indexOf(a.productType);
+      const tB = TYPE_ORDER.indexOf(b.productType);
+      if (tA !== tB) return tA - tB;
+      return (STRAIN_ORDER[a.strainType] || 99) - (STRAIN_ORDER[b.strainType] || 99);
+    });
+
+    return products;
+  }
+
+  // Simple CSV parser (handles quoted fields)
+  function parseCSV(text) {
+    const rows = [];
+    const lines = text.split('\n');
+    lines.forEach(line => {
+      if (!line.trim()) return;
+      const row = [];
+      let inQuote = false, cell = '';
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          inQuote = !inQuote;
+        } else if (ch === ',' && !inQuote) {
+          row.push(cell.trim());
+          cell = '';
+        } else {
+          cell += ch;
+        }
+      }
+      row.push(cell.trim());
+      rows.push(row);
+    });
+    return rows;
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  RENDER
+  // ══════════════════════════════════════════════════════════
+  function renderMenu(products) {
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'menu-header';
+    header.innerHTML = `
+      <div class="menu-title">${SETTINGS.menuTitle}</div>
+      <div class="menu-location">${SETTINGS.locationName}</div>
+    `;
+    app.appendChild(header);
+
+    // Group by type
+    const grouped = {};
+    TYPE_ORDER.forEach(t => grouped[t] = []);
+    products.forEach(p => {
+      if (!grouped[p.productType]) grouped[p.productType] = [];
+      grouped[p.productType].push(p);
+    });
+
+    // Render each group
+    TYPE_ORDER.forEach(type => {
+      const items = grouped[type];
+      if (!items || items.length === 0) return;
+
+      const section = document.createElement('div');
+      section.className = 'category-section';
+
+      const catHeader = document.createElement('div');
+      catHeader.className = 'category-header';
+      catHeader.textContent = type;
+      section.appendChild(catHeader);
+
+      const table = document.createElement('table');
+      table.className = 'product-table';
+
+      // Table header
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th class="col-icon"></th>
+          <th class="col-name">Product</th>
+          <th class="col-size">Size</th>
+          ${SETTINGS.showPrice ? '<th class="col-price">Price</th>' : ''}
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      // Table body
+      const tbody = document.createElement('tbody');
+      items.forEach(product => {
+        const tr = document.createElement('tr');
+
+        // Icon
+        const iconTd = document.createElement('td');
+        iconTd.className = 'col-icon';
+        if (SETTINGS.showStrain && product.strainType && product.strainType !== 'N/A') {
+          const iconUrl    = ICONS[product.strainType] || '';
+          const iconLetter = ICON_LETTER_MAP[product.strainType] || '';
+          const iconDiv    = document.createElement('div');
+          iconDiv.className = 'strain-icon';
+          if (iconUrl) {
+            iconDiv.innerHTML = `<img src="${iconUrl}" alt="${product.strainType}">`;
+          } else {
+            iconDiv.classList.add(`icon-${iconLetter}`);
+            iconDiv.textContent = iconLetter;
+          }
+          iconTd.appendChild(iconDiv);
+        }
+        tr.appendChild(iconTd);
+
+        // Name + description
+        const nameTd = document.createElement('td');
+        nameTd.className = 'col-name';
+        nameTd.innerHTML = `<span class="product-name">${product.name}</span>
+          ${product.description ? `<span class="product-desc">${product.description}</span>` : ''}`;
+        tr.appendChild(nameTd);
+
+        // Size
+        const sizeTd = document.createElement('td');
+        sizeTd.className = 'col-size';
+        sizeTd.textContent = product.unitSize;
+        tr.appendChild(sizeTd);
+
+        // Price
+        if (SETTINGS.showPrice) {
+          const priceTd = document.createElement('td');
+          priceTd.className = 'col-price';
+          const p = parseFloat(product.price);
+          priceTd.textContent = isNaN(p) ? (product.price || '') : '$' + Math.round(p);
+          tr.appendChild(priceTd);
+        }
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      section.appendChild(table);
+      app.appendChild(section);
+    });
+
+    // Footer timestamp
+    const footer = document.createElement('div');
+    footer.className = 'menu-footer';
+    const now = new Date();
+    footer.textContent = 'Last updated: ' + now.toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric'
+    });
+    app.appendChild(footer);
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  INIT
+  // ══════════════════════════════════════════════════════════
+  (async () => {
+    try {
+      const products = await fetchProducts();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderMenu(products);
+    } catch (err) {
+      document.getElementById('loading').textContent =
+        'Could not load menu data. Make sure the Catalog tab is published as CSV in Google Sheets (File → Share → Publish to web → Catalog → CSV).';
+      console.error(err);
+    }
+  })();
+</script>
+
+</body>
+</html>
