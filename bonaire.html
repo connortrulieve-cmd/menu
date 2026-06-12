@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Product Menu">
+  <title>Product Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Schibsted+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #183029;
+      --label-bg:   #F2F2F2;
+      --label-text: #888888;
+      --row-border: #D6EAD8;
+      --white:      #FFFFFF;
+      --footer:     #AAAAAA;
+      --serif:      'DM Serif Display', serif;
+      --sans:       'Schibsted Grotesk', sans-serif;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      font-family: var(--sans);
+      color: var(--primary);
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    #app {
+      width: 100%;
+      padding: 20px 24px 32px;
+    }
+
+    /* ── Loading ─────────────────────────────────────────── */
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: var(--sans);
+      font-size: 16px;
+      color: var(--label-text);
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    .menu-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .menu-title {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 400;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .menu-location {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--primary);
+      text-align: right;
+    }
+
+    /* ── Category section ───────────────────────────────── */
+    .category-section {
+      margin-bottom: 20px;
+    }
+
+    .category-header {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    /* ── Product table ──────────────────────────────────── */
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .product-table thead tr {
+      background: var(--label-bg);
+    }
+
+    .product-table thead th {
+      font-family: var(--sans);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--label-text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 8px;
+    }
+
+    .product-table thead th.col-icon  { width: 40px; text-align: center; }
+    .product-table thead th.col-name  { text-align: left; }
+    .product-table thead th.col-size  { width: 120px; text-align: right; }
+    .product-table thead th.col-price { width: 90px; text-align: right; }
+
+    .product-table tbody tr {
+      border-bottom: 1px solid var(--row-border);
+    }
+
+    .product-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .product-table tbody td {
+      padding: 7px 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Icon ───────────────────────────────────────────── */
+    .col-icon { width: 40px; text-align: center; }
+
+    .strain-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .strain-icon img {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .icon-S { background: #FFC658; }
+    .icon-H { background: #78D64B; }
+    .icon-I { background: #A77BCA; }
+    .icon-R { background: #CED9E5; }
+
+    /* ── Name ───────────────────────────────────────────── */
+    .col-name { text-align: left; }
+
+    .product-name {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      display: block;
+    }
+
+    .product-desc {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-style: italic;
+      color: #999999;
+      display: block;
+      margin-top: 1px;
+    }
+
+    /* ── Size ───────────────────────────────────────────── */
+    .col-size {
+      width: 120px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: #444444;
+    }
+
+    /* ── Price ──────────────────────────────────────────── */
+    .col-price {
+      width: 90px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    .menu-footer {
+      margin-top: 20px;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 9px;
+      font-style: italic;
+      color: var(--footer);
+    }
+
+    /* ── Refresh indicator ──────────────────────────────── */
+    #refresh-indicator {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: 11px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #refresh-indicator.visible {
+      opacity: 1;
+    }
+
+    /* ── Scrollbar ──────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--row-border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<div id="loading">Loading menu…</div>
+<div id="app" style="display:none"></div>
+<div id="refresh-indicator">Menu updated</div>
+
+<script>
+  // ══════════════════════════════════════════════════════════
+  //  CONFIGURATION
+  //  — Duplicate this file per location and update locationName
+  // ══════════════════════════════════════════════════════════
+  const SHEET_ID = '1mNhTLEtmUn9HOEALMPak4jbi7Bk_Dmn8h0mhxqWwUWo';
+
+  const SETTINGS = {
+    menuTitle:    'Product Menu',
+    locationName: 'Our Location',   // ← change this per location copy
+    showPrice:    true,
+    showStrain:   true,
+  };
+
+  // Auto-refresh interval in milliseconds (5 minutes = 300000)
+  const REFRESH_INTERVAL = 300000;
+
+  const ICONS = {
+    Sativa: 'https://raw.githubusercontent.com/connortrulieve-cmd/menu/refs/heads/main/sativa.png',
+    Hybrid: 'https://raw.githubusercontent.com/connortrulieve-cmd/menu/refs/heads/main/hybrid.png',
+    Indica: 'https://raw.githubusercontent.com/connortrulieve-cmd/menu/refs/heads/main/indica.png',
+    Ratio:  'https://raw.githubusercontent.com/connortrulieve-cmd/menu/refs/heads/main/cbd.png',
+  };
+
+  const STRAIN_ORDER    = { Sativa: 1, Hybrid: 2, Indica: 3, Ratio: 4 };
+  const TYPE_ORDER      = ['Nasal', 'Oral', 'Sublingual', 'Topical'];
+  const ICON_LETTER_MAP = { Sativa: 'S', Hybrid: 'H', Indica: 'I', Ratio: 'R' };
+  const CSV_URL         = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Catalog&t=${Date.now()}`;
+
+  // ══════════════════════════════════════════════════════════
+  //  DATA FETCH
+  // ══════════════════════════════════════════════════════════
+  async function fetchProducts() {
+    // Cache-bust so we always get fresh data
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Catalog&t=${Date.now()}`;
+    const res  = await fetch(url, { cache: 'no-store' });
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) return [];
+
+    const products = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r      = rows[i];
+      const active = String(r[0] || '').toUpperCase();
+      if (active !== 'TRUE') continue;
+      const product = {
+        name:        String(r[1] || '').trim(),
+        productType: String(r[2] || '').trim(),
+        strainType:  String(r[3] || '').trim(),
+        unitSize:    String(r[4] || '').trim(),
+        price:       r[5],
+        description: String(r[6] || '').trim(),
+      };
+      if (product.name) products.push(product);
+    }
+
+    products.sort((a, b) => {
+      const tA = TYPE_ORDER.indexOf(a.productType);
+      const tB = TYPE_ORDER.indexOf(b.productType);
+      if (tA !== tB) return tA - tB;
+      return (STRAIN_ORDER[a.strainType] || 99) - (STRAIN_ORDER[b.strainType] || 99);
+    });
+
+    return products;
+  }
+
+  function parseCSV(text) {
+    const rows = [];
+    text.split('\n').forEach(line => {
+      if (!line.trim()) return;
+      const row = []; let inQuote = false, cell = '';
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { row.push(cell.trim()); cell = ''; }
+        else { cell += ch; }
+      }
+      row.push(cell.trim());
+      rows.push(row);
+    });
+    return rows;
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  RENDER
+  // ══════════════════════════════════════════════════════════
+  function renderMenu(products) {
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'menu-header';
+    header.innerHTML = `
+      <div class="menu-title">${SETTINGS.menuTitle}</div>
+      <div class="menu-location">${SETTINGS.locationName}</div>
+    `;
+    app.appendChild(header);
+
+    // Group by type
+    const grouped = {};
+    TYPE_ORDER.forEach(t => grouped[t] = []);
+    products.forEach(p => {
+      if (!grouped[p.productType]) grouped[p.productType] = [];
+      grouped[p.productType].push(p);
+    });
+
+    TYPE_ORDER.forEach(type => {
+      const items = grouped[type];
+      if (!items || items.length === 0) return;
+
+      const section = document.createElement('div');
+      section.className = 'category-section';
+
+      const catHeader = document.createElement('div');
+      catHeader.className = 'category-header';
+      catHeader.textContent = type;
+      section.appendChild(catHeader);
+
+      const table = document.createElement('table');
+      table.className = 'product-table';
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th class="col-icon"></th>
+            <th class="col-name">Product</th>
+            <th class="col-size">Size</th>
+            ${SETTINGS.showPrice ? '<th class="col-price">Price</th>' : ''}
+          </tr>
+        </thead>
+      `;
+
+      const tbody = document.createElement('tbody');
+      items.forEach(product => {
+        const tr         = document.createElement('tr');
+        const iconUrl    = ICONS[product.strainType] || '';
+        const iconLetter = ICON_LETTER_MAP[product.strainType] || '';
+        const iconHtml   = SETTINGS.showStrain && product.strainType && product.strainType !== 'N/A'
+          ? `<div class="strain-icon${iconUrl ? '' : ' icon-' + iconLetter}">
+               ${iconUrl ? `<img src="${iconUrl}" alt="${product.strainType}">` : iconLetter}
+             </div>`
+          : '';
+        const p         = parseFloat(product.price);
+        const priceHtml = SETTINGS.showPrice
+          ? `<td class="col-price">${isNaN(p) ? (product.price || '') : '$' + Math.round(p)}</td>`
+          : '';
+
+        tr.innerHTML = `
+          <td class="col-icon">${iconHtml}</td>
+          <td class="col-name">
+            <span class="product-name">${product.name}</span>
+            ${product.description ? `<span class="product-desc">${product.description}</span>` : ''}
+          </td>
+          <td class="col-size">${product.unitSize}</td>
+          ${priceHtml}
+        `;
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      section.appendChild(table);
+      app.appendChild(section);
+    });
+
+    // Footer
+    const now = new Date();
+    const footer = document.createElement('div');
+    footer.className = 'menu-footer';
+    footer.textContent = 'Last updated: ' + now.toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+    app.appendChild(footer);
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  REFRESH — used for both initial load and auto-refresh
+  // ══════════════════════════════════════════════════════════
+  async function refresh(showIndicator = false) {
+    try {
+      const products = await fetchProducts();
+      renderMenu(products);
+      if (showIndicator) {
+        const indicator = document.getElementById('refresh-indicator');
+        indicator.classList.add('visible');
+        setTimeout(() => indicator.classList.remove('visible'), 2000);
+      }
+    } catch (err) {
+      console.error('Menu refresh failed:', err);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  INIT
+  // ══════════════════════════════════════════════════════════
+  (async () => {
+    try {
+      const products = await fetchProducts();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderMenu(products);
+
+      // Auto-refresh every 5 minutes — shows brief "Menu updated" toast
+      setInterval(() => refresh(true), REFRESH_INTERVAL);
+
+    } catch (err) {
+      document.getElementById('loading').textContent =
+        'Could not load menu data. Make sure the Catalog tab is published as CSV in Google Sheets (File → Share → Publish to web → Catalog → CSV).';
+      console.error(err);
+    }
+  })();
+</script>
+
+</body>
+</html>
